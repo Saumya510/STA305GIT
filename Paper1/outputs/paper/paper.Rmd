@@ -17,46 +17,100 @@ bibliography: references.bib
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
-library(palmerpenguins)
+library(opendatatoronto)
+library(janitor)
+library(ggplot2)
+library(knitr)
+```
+
+```{r}
+
+neighbourhoods <- list_package_resources("https://open.toronto.ca/dataset/neighbourhoods/") %>% get_resource()
+covid_dataset <- list_package_resources("https://open.toronto.ca/dataset/covid-19-cases-in-toronto/") %>% get_resource()
+
 ```
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. For instance, Section \@ref(data). R Markdown automatically makes the sections lower case and adds a dash to spaces to generate labels, for instance, Section \@ref(first-discussion-point). 
+The COVID-19 pandemic has impacted every facet of our lives. As we switch our lifestyles and worldviews to accomodate a changing evironment, we can not help but note a skew in the effects of the pandemics on different demographics. As scientistis contintue to learn more about this disease, we know that it mainly affects the respiratory tract, the nervous system, the gastrointestinal tract, and the cardiovascular system. Most people that are infected with the virus experience only mild or moderate flu like symptoms. Some might be severely ill and require medical attention. This virus has also proven to be fatal for many. In order to better understand this disproportionate effect of the virus on the general population, we must look at the patent data. It can provide us with an incredible insight into the vulnerable poplations and guide public health recommendataions for the same. 
+
+Diseases such as cancer, arthritis, cataracts, cardiovascular disesases onset with age and can be fatal for an older population. Public health guidelines have also been employed to advise older populations to be more cautious with this pandemic. Hence, for the purpose of this report, we will investigate teh eefcts of the covid 19 virus on various age groups. To localise the study of the effects of this pandemic, we are only investigating the effects of the virus on the city of Toronto. 
+
+The importance of understanding the impact of the covid 19 virus on our vulnerabel populations in crucial for shaping public healthcare and retitrement homes' care facilities and guiding public health guideliines. It is thus important to understand how the virus is impacting us and the data is being reported. This may also guide our interpretation of the virus and by extension our public health systoms.
+
+For this report, I will use the open-access data from the Toronto Public Health Services. This dataset contains public demographis and geographic information and it details the severity of all confirmed and probable covid 19 cases since January 2020. I will use this dataset to understand the covid 19 outbreak in Toronto. More importantly, I will discuss the issues of bias in how the pandmics data is reported, and the ways in which it might be misleading or misinterpreted. 
 
 
+```{r}
+#The remainder of this paper is: Section \@ref(data) introduces the data and visualizes it in various ways. Section \@ref(results) explains the results of analysis. Section \@ref(discussion) describes strength and limitations of the data and discusses possible further investigations to improve the analysis. Section \@ref(conclusion) summarizes the analysis and states the conclusion. 
+```
+
+The dataset will be dowloaded, processed, and analyzed in `R` [@citeR] primarily using the `opendatatoronto` [@citeOpenDataToronto] `tidyverse` [@citeTidyverse] and `dplyr` [@citeDplyr] packages. Figures and tables will be created with `ggplot2` [@citeGgplot2]. The packages `knitr` [@citeKnitr] are used to generate the R markdown report.
 
 # Data
 
-Our data is of penguins (Figure \@ref(fig:bills)).
+## Data Source
 
-```{r bills, fig.cap="Bills of penguins", echo = FALSE}
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = FALSE) +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
+This report uses the data from Toronto's open data resources updated by the Toronto Public Health Services [@citeOpenDataPortal]. This data has been provided through the Provincial Case & Contact Management System (CCM). The data is extracted on a weekly basis and is freely available to the general public on Toronto Covid 19 Pandemic Data website or the City of Toronto Open Data Portal. The primary dataset used in this rpeort, was extracted from the Open Data Portal with the opendatatoronto R package [@citeOpenDataToronto]. This dataset contains all reported covid cases in the city of Toronto from January 21, 2020 to Februrary 1, 2022.
+
+## Data Structure
+
+This data is collected by Tornoto's open data resouce that extracts data for the city of Toronto form the provinical level. At the provincial level, a daily report of teh covid patient data is produced by Public Health Ontario. The dataset contains a unique assigned identifer for a patient. It also includes information such as age group, neighbourhood name, gender, reported date, classification and outcome. 
+
+While collecting this patient data, there might be implicit biases that have croped into the data. The neighbourhood names are mapped from the pateints residential address and thus might not be an accurate representation of the localisation of the outbreak. Every new record in the system is assigned a unique identifier, which results in duplication of patients that might have contrcated covid twice. During the last surge of the omicron variant of covid-19, testing in the province was limited to sympotomatic and contact traceable people, which results in an under stating of the final results. 
+
+In order to better ananlyse the impact of covid 19 on various age groups, we would limit our external dataset and remove any rows with incomplete information. We also use the classification of the case to consider only the confirmed cases of covid-19. Here is an example of the subsection of the dataset that we are interetsed in working on. 
+```{r include=FALSE}
+covid_mini = subset(covid_dataset, select=c("_id", "Age Group", "Classification", "Outcome"))
+covid_mini <- clean_names(covid_mini)
+covid_mini <- na.omit(covid_mini) 
+covid_mini <- filter(covid_mini, covid_mini$classification == "CONFIRMED")
 ```
 
-Talk more about it.
+```{r}
+
+head(covid_mini)
+```
+
+We want to look at the number confirmed covid 19 cases in the city of tornot with respect to the age groups. 
+
+```{r}
+#covid_mini$outcome <- 
+
+pivot_age_group = covid_mini %>%
+  select(age_group, id, outcome) %>%
+  group_by(age_group) %>%
+  summarize(total_cases = length(!is.na(id)), total_deaths = length(outcome[outcome=="FATAL"]), 
+            mortality_rate = total_deaths/total_cases)
+
+#
+
+kable(pivot_age_group, caption = "COVID 19 Cases by Age Group", booktabs = T) 
+
+
+
+```
+
+This shows that the highest number of cases was in the age groups of 20 - 29 years followed by 30 to 39 years. However, the highest number of deaths was in the age groups of 89 to 90 years followed by 90 and older. The mortality rate (calculated by total_deaths/total_cases) was the highest for the age groups of 90 and older followed by 80 to 89 years. 
+
+```{r}
+plot1 <- 
+  ggplot(pivot_age_group) +
+  aes(x = age_group, y = total_deaths) +
+  geom_point(colour = "#0c4c8a") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+plot2 <- 
+  ggplot(pivot_age_group) +
+  aes(x = age_group, y = total_cases) +
+  geom_point(colour = "#FF0000") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+grid.arrange(plot1, plot2, ncol=2)
+```
+
 
 Also bills and their average (Figure \@ref(fig:billssssss)). (Notice how you can change the height and width so they don't take the whole page?)
-
-```{r billssssss, fig.cap="More bills of penguins", echo = FALSE, fig.width=8, fig.height=4}
-
-# This needs to be about the random data tha tI sasmpled?
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = FALSE) +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk way more about it. 
 
 
 
