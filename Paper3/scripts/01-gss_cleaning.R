@@ -37,13 +37,11 @@
 library(janitor)
 library(tidyverse)
 
-readr::read_csv("gss.csv")
-
 # Load the data dictionary and the raw data and correct the variable names
-raw_data <- readr::read_csv("Paper3/inputs/data/gss.csv")
-dict <- readr::read_lines("Paper3/inputs/data/gss_dict.txt", skip = 18) # skip is because of preamble content
+raw_data <- read_csv("inputs/data/raw_data.csv")
+dict <- read_lines("inputs/data/gss_dict.txt", skip = 18) # skip is because of preamble content
 # Now we need the labels because these are the actual responses that we need
-labels_raw <- readr::read_file("Paper3/inputs/data/gss_labels.txt")
+labels_raw <- read_file("inputs/data/gss_labels.txt")
 
 
 #### Set-up the dictionary ####
@@ -103,7 +101,7 @@ cw_statements <-
 #### Apply that dictionary to the raw data ####
 # Pull out a bunch of variables and then apply the case when statement for the categorical variables
 gss <- raw_data %>% 
-  select(caseid, 
+  select(CASEID, 
          agedc, 
          achd_1c, 
          achdmpl, 
@@ -347,4 +345,4 @@ gss <- gss %>%
     number_total_children_intention=="Don't" ~ as.numeric(NA)
   )) 
 
-write_csv(gss, "gss.csv")
+write_csv(gss, "outputs/data/gss.csv")

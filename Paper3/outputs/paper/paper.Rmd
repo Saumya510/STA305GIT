@@ -43,7 +43,7 @@ library(viridis)
 # Paper 3: 
 
 ## Socio-economic  impact of having children in Tornto according to data collected from GSS-2017
-data <- readr::read_csv("Paper3/inputs/data/gss.csv")
+data <- readr::read_csv("outputs/data/gss.csv")
 
 
 # Abbrevating terms for better representation in graphs
@@ -184,7 +184,8 @@ data.wid.nc <- data.wid[which(data.wid$no_children == 1),] # 4 obs !!!!!
 
 
 
-```{r}
+```{r echo=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 
 ### Preliminary Analysis
 
@@ -198,6 +199,13 @@ data.emp %>%
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     theme() + # add labels
     facet_wrap(vars(sex))
+
+```
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
+### Preliminary Analysis
 
 data.emp %>%
     ggplot(mapping = aes(x = occupation, fill = income_respondent)) +
@@ -213,6 +221,12 @@ data.emp %>%
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     theme() + # add labels
     facet_wrap(vars(sex))
+```
+
+```{r echo=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
+### Preliminary Analysis
 
 data.emp %>%
     ggplot(mapping = aes(x = education, fill = income_respondent)) +
@@ -226,11 +240,12 @@ data.emp %>%
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     theme() + # add labels
     facet_wrap(vars(sex))
-
 ```
 
 
-```{r}
+```{r, echo=FALSE, out.width = '50%'}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
 ############################ Patchwork Plots ############ 
   # 1. Income 
   
@@ -274,7 +289,7 @@ data.emp %>%
     data.single %>% 
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Single") +
+    ggtitle("Single Employed") +
     xlab("Income") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
     scale_fill_discrete(limits=c("Probably yes",
@@ -291,7 +306,7 @@ data.emp %>%
     data.livtog %>%
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Together") +
+    ggtitle("Living Together Employed") +
     xlab("Income") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
     scale_fill_discrete(limits=c("Probably yes",
@@ -300,7 +315,7 @@ data.emp %>%
                                  "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") + # add labels
+    theme()+
     facet_wrap(vars(sex))
   
   
@@ -309,7 +324,7 @@ data.emp %>%
     data.married%>%
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Married") +
+    ggtitle("Married Employed") +
     xlab("Income") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
     scale_fill_discrete(limits=c("Probably yes",
@@ -326,7 +341,7 @@ data.emp %>%
     data.single.nc%>%
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Single No Child") +
+    ggtitle("Single Employed No Child") +
     xlab("Income") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
     scale_fill_discrete(limits=c("Probably yes",
@@ -335,7 +350,7 @@ data.emp %>%
                                  "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") +# add labels
+    theme()+
     facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Livtog. NC = Yes
@@ -343,7 +358,7 @@ data.emp %>%
     data.livtog.nc %>%
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Together No Child") +
+    ggtitle("Living Together Employed No Child") +
     xlab("Income") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
     scale_fill_discrete(limits=c("Probably yes",
@@ -361,7 +376,7 @@ data.emp %>%
     data.married.nc%>%
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Married No Child") +
+    ggtitle("Married Employed No Child") +
     xlab("Income") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
     scale_fill_discrete(limits=c("Probably yes",
@@ -370,23 +385,33 @@ data.emp %>%
                                  "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme() + # add labels
+    theme()+
     facet_wrap(vars(sex))
 
 
 
   
   
-(full_inc + emp_inc) / (sing_inc + sing_inc.nc) +
+(full_inc + emp_inc) +
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Income and Future Children Intention: Part 1')
-(marr_inc + marr_inc.nc) / (livtog_inc + livtog_inc.nc) + 
+  
+(sing_inc + sing_inc.nc) +
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Income and Future Children Intention: Part 2')
+  
+(marr_inc + marr_inc.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Income and Future Children Intention: Part 3')
+
+(livtog_inc + livtog_inc.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Income and Future Children Intention: Part 4')
 ```
 
+```{r, echo=FALSE, out.width = '50%'}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 
-```{r}
 ############################ Patchwork Plots ############ 
   # 2. Age 
   
@@ -403,7 +428,7 @@ data.emp %>%
                                  "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme() + # add labels
+    theme()+
     facet_wrap(vars(sex))
   
   # sub of sample if worked last week == Yes
@@ -428,7 +453,7 @@ data.emp %>%
     data.single %>% 
     ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Single") +
+    ggtitle("Single Employed") +
     xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_fill_discrete(limits=c("Probably yes",
                                  "Definitely yes",
@@ -436,7 +461,7 @@ data.emp %>%
                                  "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") +# add labels
+    theme()+
     facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Livtog
@@ -444,7 +469,7 @@ data.emp %>%
     data.livtog %>%
     ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Together") +
+    ggtitle("Living Together Employed") +
     xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_fill_discrete(limits=c("Probably yes",
                                  "Definitely yes",
@@ -461,7 +486,7 @@ data.emp %>%
     data.married%>%
     ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Married") +
+    ggtitle("Married Employed") +
     xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_fill_discrete(limits=c("Probably yes",
                                  "Definitely yes",
@@ -469,7 +494,7 @@ data.emp %>%
                                  "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") + # add labels
+    theme()+
     facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Single, NC = Yes 
@@ -477,7 +502,7 @@ data.emp %>%
     data.single.nc%>%
     ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Single No Child") +
+    ggtitle("Single Employed No Child") +
     xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_fill_discrete(limits=c("Probably yes",
                                  "Definitely yes",
@@ -493,24 +518,7 @@ data.emp %>%
     data.livtog.nc %>%
     ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Togther No Child") +
-    xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
-    scale_fill_discrete(limits=c("Probably yes",
-                                 "Definitely yes",
-                                 "Probably not",
-                                 "No, definitely not")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") + # add labels
-    facet_wrap(vars(sex))
-  
-  
-  # if WLW = Yes, MS = Married, NC = Yes 
-  marr_age.nc <-
-    data.married.nc%>%
-    ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
-    geom_bar() +
-    ggtitle("Married No Child") +
+    ggtitle("Living Togther Employed No Child") +
     xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_fill_discrete(limits=c("Probably yes",
                                  "Definitely yes",
@@ -520,21 +528,43 @@ data.emp %>%
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     theme() + # add labels
     facet_wrap(vars(sex))
+  
+  
+  # if WLW = Yes, MS = Married, NC = Yes 
+  marr_age.nc <-
+    data.married.nc%>%
+    ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
+    geom_bar() +
+    ggtitle("Married Employed No Child") +
+    xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
+    scale_fill_discrete(limits=c("Probably yes",
+                                 "Definitely yes",
+                                 "Probably not",
+                                 "No, definitely not")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme()+
+    facet_wrap(vars(sex))
 
   
   
-(full_age + emp_age) / (sing_age + sing_age.nc) + 
+(full_age + emp_age)  + 
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Age Group and Future Children Intention: Part 1')
-(marr_age + marr_age.nc) / (livtog_age + livtog_age.nc) + 
+(sing_age + sing_age.nc) + 
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Age Group and Future Children Intention: Part 2')
+(marr_age + marr_age.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Age Group and Future Children Intention: Part 3')
+(livtog_age + livtog_age.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Age Group and Future Children Intention: Part 4')
 ```
 
+```{r, echo=FALSE, out.width = '50%'}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 
-
-
-```{r}
 ############################ Patchwork Plots ############ 
   # 3. Occupation
   
@@ -553,7 +583,7 @@ data.emp %>%
                                  "Probably not", "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme() + # add labels
+    theme()+
     facet_wrap(vars(sex))
   
   # sub of sample if worked last week == Yes
@@ -579,7 +609,7 @@ data.emp %>%
     data.single %>% 
     ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Single") +
+    ggtitle("Single Employed") +
     xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Sales", "Management", "App. Science",
                               "Trade", "Business", "Education", 
@@ -589,7 +619,7 @@ data.emp %>%
                                  "Probably not", "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") +# add labels
+    theme()+
     facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Livtog
@@ -597,7 +627,7 @@ data.emp %>%
     data.livtog %>%
     ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Together") +
+    ggtitle("Living Together Employed") +
     xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Sales", "Management", "App. Science",
                               "Trade", "Business", "Education", 
@@ -616,7 +646,7 @@ data.emp %>%
     data.married%>%
     ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Married") +
+    ggtitle("Married Employed") +
     xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Sales", "Management", "App. Science",
                               "Trade", "Business", "Education", 
@@ -626,7 +656,7 @@ data.emp %>%
                                  "Probably not", "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") + # add labels
+    theme() +
     facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Single, NC = Yes 
@@ -634,7 +664,7 @@ data.emp %>%
     data.single.nc%>%
     ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Single No Child") +
+    ggtitle("Single Employed No Child") +
     xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Sales", "Management", "App. Science",
                               "Trade", "Business", "Education", 
@@ -652,26 +682,7 @@ data.emp %>%
     data.livtog.nc %>%
     ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Together No Child") +
-    xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
-    scale_x_discrete(limits=c("Sales", "Management", "App. Science",
-                              "Trade", "Business", "Education", 
-                              "Agriculture", "Art", "Manufacturing",
-                              "Health"))+
-    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
-                                 "Probably not", "No, definitely not")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") + # add labels
-    facet_wrap(vars(sex))
-  
-  
-  # if WLW = Yes, MS = Married, NC = Yes 
-  marr_occ.nc <-
-    data.married.nc%>%
-    ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
-    geom_bar() +
-    ggtitle("Married No Child") +
+    ggtitle("Living Together Employed No Child") +
     xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Sales", "Management", "App. Science",
                               "Trade", "Business", "Education", 
@@ -685,16 +696,43 @@ data.emp %>%
     facet_wrap(vars(sex))
   
   
+  # if WLW = Yes, MS = Married, NC = Yes 
+  marr_occ.nc <-
+    data.married.nc%>%
+    ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
+    geom_bar() +
+    ggtitle("Married Employed No Child") +
+    xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
+    scale_x_discrete(limits=c("Sales", "Management", "App. Science",
+                              "Trade", "Business", "Education", 
+                              "Agriculture", "Art", "Manufacturing",
+                              "Health"))+
+    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
+                                 "Probably not", "No, definitely not")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme()+
+    facet_wrap(vars(sex))
+  
+  
 
-(full_occ + emp_occ) /  (sing_occ + sing_occ.nc) + 
+(full_occ + emp_occ) + 
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Occupation and Future Children Intention: Part 1')
-(marr_occ + marr_occ.nc) / (livtog_occ + livtog_occ.nc) + 
+(sing_occ + sing_occ.nc) + 
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Occupation and Future Children Intention: Part 2')
+(marr_occ + marr_occ.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Occupation and Future Children Intention: Part 3')
+(livtog_occ + livtog_occ.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Occupation and Future Children Intention: Part 4')
 ```
 
-```{r}
+```{r, echo=FALSE, out.width = '50%'}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
 ############################ Patchwork Plots ############ 
   # 4. Eductaion
   
@@ -711,7 +749,7 @@ data.emp %>%
                                  "Probably not", "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme() + # add labels
+    theme()+
     facet_wrap(vars(sex))
   
   # sub of sample if worked last week == Yes
@@ -735,7 +773,7 @@ data.emp %>%
     data.single %>% 
     ggplot(mapping = aes(x = education, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Single") +
+    ggtitle("Single Employed") +
     xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
                               "Less than Bach", "Bach", "Above Bach" ))+
@@ -743,7 +781,7 @@ data.emp %>%
                                  "Probably not", "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") +# add labels
+    theme()+
     facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Livtog
@@ -751,7 +789,7 @@ data.emp %>%
     data.livtog %>%
     ggplot(mapping = aes(x = education, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Together") +
+    ggtitle("Living Together Employed") +
     xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
                               "Less than Bach", "Bach", "Above Bach" ))+
@@ -768,7 +806,7 @@ data.emp %>%
     data.married%>%
     ggplot(mapping = aes(x = education, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Married") +
+    ggtitle("Married Employed") +
     xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
                               "Less than Bach", "Bach", "Above Bach" ))+
@@ -776,7 +814,7 @@ data.emp %>%
                                  "Probably not", "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") + # add labels
+    theme()+
     facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Single, NC = Yes 
@@ -784,7 +822,7 @@ data.emp %>%
     data.single.nc%>%
     ggplot(mapping = aes(x = education, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Single No Child") +
+    ggtitle("Single Employed No Child") +
     xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
                               "Less than Bach", "Bach", "Above Bach" ))+
@@ -800,7 +838,7 @@ data.emp %>%
     data.livtog.nc %>%
     ggplot(mapping = aes(x = education, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Together No Child") +
+    ggtitle("Living Together Employed No Child") +
     xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
                               "Less than Bach", "Bach", "Above Bach" ))+
@@ -808,7 +846,7 @@ data.emp %>%
                                  "Probably not", "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") + # add labels
+    theme()+
     facet_wrap(vars(sex))
   
   
@@ -817,7 +855,7 @@ data.emp %>%
     data.married.nc%>%
     ggplot(mapping = aes(x = education, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Married No Child") +
+    ggtitle("Married Employed No Child") +
     xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
                               "Less than Bach", "Bach", "Above Bach" ))+
@@ -831,12 +869,25 @@ data.emp %>%
   
 
 
-(full_edu + emp_edu) /  (sing_edu + sing_edu.nc) + 
+(full_edu + emp_edu)  + 
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Education and Future Children Intention: Part 1')
-(marr_edu + marr_edu.nc) / (livtog_edu + livtog_edu.nc) + 
+(sing_edu + sing_edu.nc) + 
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Education and Future Children Intention: Part 2')
+(marr_edu + marr_edu.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Education and Future Children Intention: Part 3')
+(livtog_edu + livtog_edu.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Education and Future Children Intention: Part 4')
 
 ```
+
+
+Figure 1: 
+1. For Females - Proportion pick up one part one by looking at income at the complete data for this intention of children is decreasing when we move from 25 to 250 K to 75 people were definitely yes I don't think that otherwise people definitely don't want that abortion increases in value and it is with the trailer see you when you talk about the post and then come back to the tandem 
+
+
+
 
