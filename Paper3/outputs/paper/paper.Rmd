@@ -1,53 +1,119 @@
 ---
-title: "The Effects of COVID-19 on Older Populations"
-author: 
+title: "Successful Canadians in 2017 Prefer Not Having Children in the Future"
+subtitle: "A study on the effect of income on family planning intentions with Canadian GSS 2017 data" 
+author:
+  - Anshuman Agarwal 
+  - Ishaan Bansal 
   - Saumya Bakshi
-thanks: "Code and data are available at: https://github.com/Saumya510/STA305GIT/tree/main/Paper1"
+thanks: "Code and data are available at: https://github.com/Saumya510/STA305GIT/tree/main/Paper3"
 date: "`r format(Sys.time(), '%d %B %Y')`"
-abstract: "Toronto COVID-19 data was pulled from the City of Toronto Open Portal to analyze the effects of the pandemic on various age groups and find which age groups are most vulnerable to the COVID-19 virus. We noted that although the older populations have a lower number of cases, they have a higher number of deaths, which leads to a higher mortality rate. This information has been used by scientists and policy makers to outline public health guidelines for the city of Toronto."
-
+abstract: “This paper attempts to find the correlation between successfulness and future intention to have children using 2017 GSS data. When measuring successfulness, we used the following categories to judge how successful people are – age, income, occupation, and education. Based on our findings, it is evident that there is a strong correlation, showing successful people to be less likely to have children.” 
 output:
-  bookdown::pdf_document2
-toc: FALSE
+  bookdown::pdf_document2 
+toc: TRUE
 bibliography: references.bib
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-# Workplace setup 
+```{r libraries, include = FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 if (!require("tidyverse")) install.packages("tidyverse")
-if (!require("dplyr")) install.packages("dplyr") # used
+if (!require("dplyr")) install.packages("dplyr")
 if (!require("janitor")) install.packages("janitor")
-if (!require("ggplot2")) install.packages("ggplot2") # used
+if (!require("ggplot2")) install.packages("ggplot2")
 if (!require("knitr")) install.packages("knitr")
-if (!require("kableExtra")) install.packages("kableExtra") 
-if (!require("gridExtra")) install.packages("gridExtra")
-if (!require("grid")) install.packages("grid")
-if (!require("patchwork")) install.packages("patchwork") # used 
-if (!require("viridis")) install.packages("viridis")
+if (!require("patchwork")) install.packages("patchwork")
+if (!require("here")) install.packages("here")
+if (!require("bookdown")) install.packages("bookdown")
 
+library(here)
+library(bookdown)
 library(tidyverse)
 library(dplyr)
 library(janitor)
 library(ggplot2)
 library(knitr)
-library(kableExtra)
-library(gridExtra)
-library(grid)
 library(patchwork)
-library(viridis)
+# Libraries used by prof also need to be cited 
 ```
 
-```{r include=FALSE}
-# Paper 3: 
+\newpage
 
-## Socio-economic  impact of having children in Tornto according to data collected from GSS-2017
-data <- readr::read_csv("outputs/data/gss.csv")
+# Introduction
+The 21st century has changed the way people look at traditional gender roles. With an increase in the number of people prioritizing their career, the intention of bearing a child has become secondary. The General Society Survey conducted in the United States indicates [@hagewen2005] that the mean Ideal Family size has decreased over the decades to a preference of ideally two or three children. 
+
+As more women aim to enter the workforce and work towards building their career, family planning is not prioritized. This may be attributed to economic disadvantages that pose as job insecurity or occupational category. In a study conducted with Italian population [@modena2014], it was noted that women that are exposed to an unstable work environment are highly discourages the decision to bear their first child. The decision to not bear their first child was also coupled with a decreased household wealth. As income rises, people would feel that they are more capable of taking care of a child. However, an increased income could also be due to increased working hours and busier jobs. 
+
+Age also plays an integral part in the intent to bear children. There is a steep increase in risks associated with fertility as women age. An aging population also have a higher probability of already having a child, thus there might be a decrease in the intention to bear children.
+
+Education plays a significant role in the decision to bear children as educated women are more likely to delay marriage, practice safe intercourse and limit or delay childbearing to prioritize careers. In a study conducted with undergraduate female students in Saudi Arabia, 85% of the respondents indicated that they would prefer to postpone childbearing till they have finished their education and have a stable career.[@alfaraj2019]
+
+In this paper we aim to analyse the socio-economic factors such as income, age, occupation and education that correspond to a decline in the intent to have children. We hypothesize that an increased individual income and high-income occupation would result in a decrease in the intent to have children. In addition to that, we hypothesize that an older population and educated population would have a decrease in the intent to have children.
+
+# Data
+## Statistical Software and Dataset
+This report analyses data collected by the 2017 Canadian General[@statscan] Societal Survey to investigate different factors affecting a Canadian’s decision of starting or increasing their family. The statistical analysis in this report which includes the preparation of the data set after appropriate cleaning and reformatting and the visualization of analysed data was done with the help of the `R statistical programming language` [@R]. Along with the base features that `R` includes, this analysis used several packages that can be downloaded and used by any user of the software. For the preparation of the cleaned data set, the packages `tidyverse` [@tidyverse] and `janitor` [@janitor] were used to manipulate raw data that is collected from the survey. The cleaned data set was then analysed using `dplyr` [@dplyr] and visualized using `ggplot2` [@ggplot2] and `patchwork` [@patchwork]. The report was constructed in the *R Markdown* format and formatted using `knitr` [@knitr] and `bookdown` [@bookdown]. Finally, to maintain a completely reproducible workflow, `here` [@here] was used to index the location of the files necessary to create this report. 
+
+The raw data - the responses of the GSS 2017 [@statscan] is not publicly available, however access was provided to the University of Toronto, which the authors of this paper are affiliated to (more information about obtaining a cleaned version of the data set is available in the linked GitHub repository). After cleaning the raw data and extracting the variable information from the variable code, the cleaned data set contained a range of information on 20602 respondents of the survey in the form of 81 variable columns. From the 81 variable columns available in the cleaned data set, this analysis focused on the following information: 
+  - Age, (respondents were free to input their age)
+  - Sex, (respondents were given a choice between Male and Female, however it was not mentioned if the respondents were supposed to answer their sex assigned at birth or the gender they identify as)
+  - Intention to have children in the future, (respondents were asked to input a number, which was then coded into a range of categories varying by certainty of their choice to have or not have children in the future)
+  - Occupation, (respondents were asked to input their occupation which was then coded into a range of categories)
+  - Education, (respondents were asked to choose from multiple options which described their maximum level of education)
+  - Marital Status, (respondents were asked to choose from multiple options which described their current marital status)
+  - Previous children, (respondents were asked if they have ever given birth or fathered children)
+  - Information about Income and Employment status were taken from personal and household tax data.
+
+## Information about the Canadian General Social Survey 2017 (Cycle 31)
+Conducted during February 1st 2017 - November 17th 2017, this survey aimed to create a census of the Canadian population by sampling from residential mailing addresses in the population. Sample data collected from 43,000 people, 15 years of age and older, across 10 provinces was used to create inferences on the total population, providing policy makers and analysts with statistical information on living conditions and well-being of people living in Canada.
+
+The survey was conducted by the Canadian government through telephone interviews of the randomly selected sample of the population on a voluntary basis. While the survey was conducted through telephone interviews, it was also necessary for the sample population to be reached via mail to ensure proper geographical distribution. In addition, a portion of the data was collected through personal and household tax data to enhance the data and minimize reporting burden for the respondents. 
+
+The purpose of this data is to periodically monitor changes in Canadian families across the following headings – conjugal and parental hearings, family origins, children’s home leaving, fertility intentions and various other socioeconomic characteristics. Data and inferences made from the data predominantly impacted the following program and policy areas – prenatal benefits, childcare strategies, child custody and spousal support programs. 
+
+Response and non-response bias are a key source of concern in the GSS. There is the strong potential that respondents may choose to avoid responding to sensitive questions which the survey is forced to ask to collect accurate and meaningful data. To combat this factor, a proportion of data was collected through personal and household tax data to ensure data validity and meaningfulness. Despite this there is still a large non-response bias in the survey, approximately 13,000 NA responses to desired variable that recorded the response about the respondent's intention to have children in the future. This non-response bias can be taken care of if some kind of incentives are provided for participation [@nrbias], however given the nature and size of the survey this might not be economically feasible. 
+
+Additionally, a key weakness of this survey is the conformity bias. While respondents are asked to respond truthfully, it is evident that respondents choose to respond to certain questions in a manner which presents themselves in a positive manner. 
+
+To protect respondent privacy, survey responses were collected under the authority of the Statistics Act to ensure confidentiality of the data. In addition, survey submissions were not connected to individual addresses and the only geographic questions pertained to approximate (provincial) geographic location. 
+
+## Methodology
+The aim of this analysis is to explore the weight of socio-economic determinants of success, such as age, income, occupation, and education of a respondent of the 2017 Canadian GSS on their decision to have children in the future. This analysis also aims to see how this effect varies with factors commonly known to contribute towards the observed variation in future family planning, such as gender, employment status, marital status, and the fact if the person in question already has children prior to responding to the survey. 
+
+The first step in the methodology was to re-code variables of interest such as: 
+1. Age: Originally available as a continuous variable recording integer values for age, re-coded as a factor such that the age of the respondent falls into one of six monotonically increasing levels of age. 
+2. Occupation: Information about the occupation of the respondent was recorded as a categorical variable with 12 levels, which included a level 'uncodable' which refers to occupations which did not fall into any of the 10 categories created, and a level 'NA' which refers to the respondents who did not respond to the question. These two levels were clubbed together as 'NA' for the sake of the analysis. Furthermore, the labels originally given to each category were reduced to short-hand to allow for neater graphs. 
+3. Education: Information about the maximum level of education of the respondent was recorded as a categorical variable with 7 levels, which included a level for NA. None of these levels were amalgamated, and only their labels were reduced to short-hand to increase the readability of the graphs. 
+4. Income: Information about the annual income of the respondent was recorded as a categorical interval variable with 6 levels starting at 'at least CAD 25,000', which then monotonically increased by CAD 25,000, with the last level being 'Greater than CAD 125,000'. The labels of the levels were also reduced to short-hand. 
+
+```{r, include = FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Load Clean data (To obtain raw data and understand the cleaning process, please see README.md in the GitHub repo)
+
+data <- read_csv(here::here("outputs/data/gss.csv"))
 
 
-# Abbrevating terms for better representation in graphs
+# Creating age_group variable to record int values as factors. 
+data <- 
+  data %>% 
+  mutate(age_group = 
+           case_when(age < 20 ~ "<20",
+                     age < 30 ~ "20-29",
+                     age < 40 ~ "30-39",
+                     age < 50 ~ "40-49",
+                     age < 60 ~ "50-59",
+                     age < 75 ~ "60-75"
+           ),
+         age_group = factor(age_group,
+                            levels = c("<20",
+                                       "20-29",
+                                       "30-39",
+                                       "40-49",
+                                       "50-59",
+                                       "60-75"
+                            )
+         )
+  )
 
+# Re-coding Occupation Variable
 data$occupation[(data$occupation) == "Sales and service occupations" ] <- "Sales"
 data$occupation[(data$occupation) == "Management occupations" ] <- "Management"
 data$occupation[(data$occupation) == "Trades, transport and equipment operators and related oc..." ] <- "Trade"
@@ -60,14 +126,7 @@ data$occupation[(data$occupation) == "Natural and applied sciences and related o
 data$occupation[(data$occupation) == "Occupations in manufacturing and utilities"] <- "Manufacturing"
 data$occupation[(data$occupation) == "Uncodable"] <- NA
 
-
-data$income_respondent[(data$income_respondent) == "Less than $25,000"] <- "<25k"
-data$income_respondent[(data$income_respondent) == "$25,000 to $49,999"] <- "<50k"
-data$income_respondent[(data$income_respondent) == "$50,000 to $74,999"] <- "<75k"
-data$income_respondent[(data$income_respondent) == "$75,000 to $99,999"] <- "<100k"
-data$income_respondent[(data$income_respondent) == "$100,000 to $ 124,999"] <- "<125k"
-data$income_respondent[(data$income_respondent) == "$125,000 and more"] <- ">=125k"
-
+# Re-coding Education Variable 
 data$education[(data$education) == "Less than high school diploma or its equivalent"] <- "Less than HS"
 data$education[(data$education) == "High school diploma or a high school equivalency certificate"] <- "HS"
 data$education[(data$education) == "Trade certificate or diploma"] <- "Trade"
@@ -76,51 +135,56 @@ data$education[(data$education) == "University certificate or diploma below the 
 data$education[(data$education) == "Bachelor's degree (e.g. B.A., B.Sc., LL.B.)"] <- "Bach"
 data$education[(data$education) == "University certificate, diploma or degree above the bach..."] <- "Above Bach"
 
+# Re-coding Income of respondent variable
+data$income_respondent[(data$income_respondent) == "Less than $25,000"] <- "<25k"
+data$income_respondent[(data$income_respondent) == "$25,000 to $49,999"] <- "<50k"
+data$income_respondent[(data$income_respondent) == "$50,000 to $74,999"] <- "<75k"
+data$income_respondent[(data$income_respondent) == "$75,000 to $99,999"] <- "<100k"
+data$income_respondent[(data$income_respondent) == "$100,000 to $ 124,999"] <- "<125k"
+data$income_respondent[(data$income_respondent) == "$125,000 and more"] <- ">=125k"
+```
 
-# Adding Age group variable 
-data <- 
-  data %>% 
-  mutate(age_group = 
-           case_when(age < 20 ~ "<20", age < 30 ~ "20-29",
-                     age < 40 ~ "30-39", age < 50 ~ "40-49",
-                     age < 60 ~ "50-59", age < 75 ~ "60-75"
-           ),
-         age_group = factor(age_group,
-                            levels = c("<20", "20-29", "30-39", "40-49", "50-59", "60-75")
-                            ))
+The variable this analysis is primarily interested in was `FI_Q105` from GSS 2017, which records the respondent’s intention to have [another/a] child in the next three years. Respondents were given a range of choices of varying certainty about their intention to have a child in the coming 3 years. These choices included “RF” which corresponds to NA to account for non-responses. For this analysis, these NA responses (13438 responses) were removed, which is a very significant proportion of the sample (about 65%). Exclusion of these observations was necessary to restrict the inferences made in this analysis to the sub-sample of the population that responded to this question. The trade-off between coherence of the analysis and the important information lost by the necessary removal of these observations is important to note as a key limitation of this analysis. Furthermore, the nature of the question of interest also increases the affinity of the data to be subject to conformity bias, and the authors try to deal with this, and other limitations of the GSS 2017, by augmenting the GSS 2017 survey design by creating a supplemental survey (See Appendix) to re-record the information captured by the GSS. 
 
-# adding cat var for feelings life
-data <- 
-  data %>% 
-  mutate(feelings_life_cat = 
-           case_when(feelings_life < 0 ~ "0",
-                     feelings_life < 1 ~ "1",
-                     feelings_life < 2 ~ "2",
-                     feelings_life < 3 ~ "3",
-                     feelings_life < 4 ~ "4",
-                     feelings_life < 5 ~ "5",
-                     feelings_life < 6 ~ "6",
-                     feelings_life < 7 ~ "7",
-                     feelings_life < 8 ~ "8",
-                     feelings_life < 9 ~ "9",
-                     feelings_life < 10 ~ "10"
-           ),
-         feelings_life_cat = factor(feelings_life_cat,
-                                    levels = c("0", "1", "2", "3", "4", "5",
-                                               "6", "7", "8", "9", "10"
-                                    )
-         )
-  )
-## Creating dummy variables useful to the study: 
+```{r, include = FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+# Looking at the number of respondents who did not respond to FI_Q105
+length(which(is.na(data$future_children_intention)))
 
-# Dummy to see if the respondent has any children 
-data$no_children <- ifelse(data$total_children == 0, 1, 0)
+  # 13438 NA observations present out of 20602 total observations 
 
+# Removing NA observations and saving data
+data <- data[-(which(is.na(data$future_children_intention))),]
+  
+  # Data now has 7164 observations 
+
+# Test to see if the subset is correct 
+length(which(is.na(data$future_children_intention)))
+
+  # 0 NA observations present, code works!
+```
+
+After the subset of respondents who answered `FI_Q105` was created, the following a set of dummy variables were created:
+1. `is_employed`: This dummy variable is assigned the value 1, if the respondent answered 'Yes' to working last week.
+
+2. `is_single`: This dummy variable is assigned the value 1, if the respondent answered with 'Single, never married' to question `MA0_Q102` of the GSS 2017 questionnaire. 
+
+3. `is_livtog`: This dummy variable is assigned the value 1, if the respondent answered with 'Living common-law' to question `MA0_Q102` of the GSS 2017 questionnaire.  
+
+4. `is_seperated`: This dummy variable is assigned the value 1, if the respondent answered with 'Seperated' to question `MA0_Q102` of the GSS 2017 questionnaire.  
+
+5. `is_married`: This dummy variable is assigned the value 1, if the respondent answered with 'Married' to question `MA0_Q102` of the GSS 2017 questionnaire.  
+
+6. `is_divorced`: This dummy variable is assigned the value 1, if the respondent answered with 'Divorced' to question `MA0_Q102` of the GSS 2017 questionnaire.  
+
+7. `is_widowed`: This dummy variable is assigned the value 1, if the respondent answered with 'Widowed' to question `MA0_Q102` of the GSS 2017 questionnaire. 
+
+8. `no_children`: This dummy variable is assigned the value 1, if the respondent reported having 0 children currently, including any children they might have had from previous marraiges.  
+
+```{r, include = FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 # Dummy to see if they worked last week (23 NAs)
 data$is_employed <- ifelse(data$worked_last_week == "Yes", 1, 0)
 
-# Dummies for marital categories: (7 NA's)
-unique(data$marital_status)
+# Dummies for Marital Categories 
 data$is_single <- ifelse(data$marital_status == "Single, never married", 1, 0)
 data$is_livtog <- ifelse(data$marital_status == "Living common-law", 1, 0)
 data$is_seperated <- ifelse(data$marital_status == "Separated", 1, 0)
@@ -128,128 +192,262 @@ data$is_married <- ifelse(data$marital_status == "Married", 1, 0)
 data$is_divorced <- ifelse(data$marital_status == "Divorced", 1, 0)
 data$is_widowed <- ifelse(data$marital_status == "Widowed", 1, 0)
 
-# checking to see which respondents did not answer the question: (tag question from questionnaire)
-length(which(is.na(data$future_children_intention)))
-# total obs is 20602
-# NAs = 13438 
-# 7164 valid obs 
+# Dummy to see if the respondent has any children 
+data$no_children <- ifelse(data$total_children == 0, 1, 0)
 ```
 
-```{r include=FALSE}
+Subsequently, subsets of subsets were created in the following order: 
 
-## Creating Subsets based on the dummies: 
+1. From the subset of respondents who responded to `FI_Q105`, a subset of respondents based on `is_employed` was created to put a restriction to the scope of the research question. 
 
-# SUBSET OF EVERYONE WHO ANSWERED THE MAIN QUESTION. 
-data <- data[-(which(is.na(data$future_children_intention))),]
-length(which(is.na(data$future_children_intention)))
-# 0 NA's
+2. From the subset of respondents who responded to `FI_Q105` and said 'Yes' to working last week, subsets of respondents were created based on their respective six marital categories, based on the six aforementioned dummies, from: `is_single` to: `is_widowed`, are created to decompose  the effect of success on family planning based on marital status.  
 
-# SUBSETS BASED ON SEX 
+3. From the subsets belonging to the respective marital categories, of respondents who responded to `FI_Q105` and said 'Yes' to working last week, a subset was created for each of these subsets based on `no_children`, to further decompose the effect being explored to the samples of the population that has plans (want them or don't want them) for future children and don't have children prior to answering this questionnaire. 
 
-men <- data[which(data$is_male == 1),]  # 3419 obs
-women <- data[which(data$is_male == 0),] # 3745 obs
+Each restriction imposed on the data adds to the limitation of the analysis as important information for other variables is foregone when observations are lost. Thus, if enough observations are deleted then the loss of information trumps the argument for maintaining stability of the study, as the conclusions obtained from such analysis would succumb to a lot of sampling error due to the small sample size, and thus not worthwhile to investigate in the first place. It is for this reason we decided to only focus on 3 marital categories: Single, Living Together and Married for this study. 
 
-# SUBSET BASED ON EMPLOYMENT STATUS, FOR BOTH SEXES
+```{r, include = FALSE, echo=FALSE, message=FALSE, warning=FALSE}
 
-data.emp <- data[which(data$is_employed == 1),] # 5196 obs
-men.emp <- men[which(men$is_employed == 1),] # 2617 obs
-women.emp <- women[which(women$is_employed == 1),] #2579 obs 
+# SUBSET BASED ON EMPLOYMENT STATUS
+data.emp <- data[which(data$is_employed == 1),] # 5196 obs (1968 obs lost)
 
-# SUBSET BASED ON MARITAL STATUS, FOR BOTH SEXES WHO ARE EMPLOYED
+# SUBSET BASED ON MARITAL STATUS, FOR  RESPONDENTS WHO ARE EMPLOYED
+data.single <- data.emp[which(data.emp$is_single == 1),] #1889 obs (3307 obs lost)
+data.livtog <- data.emp[which(data.emp$is_livtog == 1),] # 721 obs (4475 obs lost)
+# data.sep <- data.emp[which(data.emp$is_seperated == 1),] # 154 obs (5042 obs lost) (N is critically low) (omit)
+data.married <- data.emp[which(data.emp$is_married == 1),] # 2181 obs (3105 obs lost)
+# data.div <- data.emp[which(data.emp$is_divorced== 1),] # 224 obs (4972 obs lost) (N is critically low) (omit)
+# data.wid <- data.emp[which(data.emp$is_widowed == 1),] # 27 obs (5169 obs lost) (N is critically low) (omit)
 
-data.single <- data.emp[which(data.emp$is_single == 1),] #1889 obs
-data.livtog <- data.emp[which(data.emp$is_livtog == 1),] # 721 obs
-data.sep <- data.emp[which(data.emp$is_seperated == 1),] # 154 obs
-data.married <- data.emp[which(data.emp$is_married == 1),] # 2181 obs
-data.div <- data.emp[which(data.emp$is_divorced== 1),] # 224 obs
-data.wid <- data.emp[which(data.emp$is_widowed == 1),] # 27 obs !!!!!
-
-# obs add up to 5196
-
-# SUBSET BASED ON THE FACT IF THE RESPONDENT HAVE CHILDREN PRIOR TO ANSWERING QUESTIONNAIRE, 
-# FOR BOTH SEXES OF ALL MARITAL STATUS WHO ARE EMPLOYED (OMITTING PRIOR SUBSETS WITH LESS OBS)
+# SUBSET BASED ON THE FACT IF THE RESPONDENT DONT HAVE CHILDREN PRIOR TO ANSWERING QUESTIONNAIRE, 
+# FOR ALL MARITAL STATUS WHO ARE EMPLOYED (OMITTING PRIOR SUBSETS WITH LESS OBS)
 
 data.single.nc <- data.single[which(data.single$no_children == 1),] #1592 obs
 data.livtog.nc <- data.livtog[which(data.livtog$no_children == 1),] # 248 obs
-data.sep.nc <- data.sep[which(data.sep$no_children == 1),] # 16 obs !!!!!
 data.married.nc <- data.married[which(data.married$no_children == 1),] # 263 obs
-data.div.nc <- data.div[which(data.div$no_children == 1),] # 52 obs
-data.wid.nc <- data.wid[which(data.wid$no_children == 1),] # 4 obs !!!!!
-
-# obs add up to 5196
-
-
 ```
 
+Lastly, after the creation of the required subsets, bar charts are created to represent cross-sections of the subsets from which analysis is derived. Since the aim of this study is to see how changes in relative measures of success affect the intention of a respondent of the GSS in 2017, to have children in the next 3 years, the analysis in this paper would take the following order: 
+
+1. From the first subset that removes NA responses of `FI_Q105`, the counts for each unique answer to `FI_Q105` is calculated and cross tabulated the counts based on the income categories present in the data to see how responses vary for respondents in different income groups. A bar chart is made visualizing this information. 
+
+2. Continuing with the same data subset, the counts for  respective`age_group` categories are cross tabulated with income categories to gain insight on the extent of the contribution of the age of the respondent on the results observed in (1). A bar chart representing this is presented. 
+
+3. Continuing with the same data subset, the counts for each unique answer to `FI_Q105` is cross tabulated with the counts based on `age_group` categories too see how responses vary with changing age groups. A bar chart for this step is presented to show the findings. 
+
+4. Steps (2) and (3) are repeated for the following variables: `occupation` and `education`, working on the same subset of the data. 
+
+5. For each additional subset that was created, the relationship between `FI_Q105` and `income_respondent`,
+`age_group`, `occupation` and `education` were found by following the methodology of Step (3), and subsequently bar charts are created. 
+
+6. The results of Steps (1) to (5) are reported in Section 3 of this report. The following discussion of the findings is reported in Section 4 of this report.  
+
+# Results 
+## Impact of Income
+### Income and Future Intention of Children
+For the sample of the data which includes respondents who chose to report their intention of having children in the future, the relation between Income and Future intention of children is reported in (Figure \@ref(fig:one)) which is present in Appendix B. 
+
+As it can be seen from the first plot of (Figure \@ref(fig:one)), for both Females and Males, the most obvious trend which can be noticed is that the majority of all respondents, irrespective of the income group they fall under, are certain that they wont have children in the future. Furthermore, the percentage of respondents who are certain that they would definitely have children in the future, decreases for both Females and Males as we move to a higher income band. 
+
+The same absolute trend is noticed in the second plot of (Figure \@ref(fig:one)), implying that for the sample which reported to employed as of last week, the majority consensus is that they are certain that they would not have children in the future. This fact remains unchanged for both genders. Furthermore, the percentage of respondents which definitely want children in the future decreases with increasing income, and the vice-versa is also true. 
+
+Considering respondents who are employed and single, as reported in the first plot of (Figure \@ref(fig:two), (also present in Appendix B), the trend observed before flips. Majority consensus for single employed people of lower income groups is that they definitely want to have children in the future. This observation is true for both men and women, while being greater in size for men compared to women. However for both men and women, as we move to higher income bands, the percentage of people who definitely wont have children increases. 
+
+Upon inspection of a further subset, people who are employed, single and have no children (Plot 2, Figure \@ref(fig:two)), the same results are seen. A greater absolute percentage of respondents in this data definitely want to have children, however for both genders,a greater percentage of members from higher income bands still choose not to have any children in the near future. 
+
+Shifting focus onto employed married respondents, as reported in the first plot of (Figure \@ref(fig:three)), the percentage of respondents who definitely want kids in the future seem almost negligible. The majority consensus remains to be to not have children, and very less variation is noticed across income groups. The second plot, which controls for previous children, shows a relative increase in those who want children in the future, however the majority remains the same for both genders. 
+
+Lastly, looking at employed respondents who are living together in common-law, as reported in the first plot of (Figure \@ref(fig:four)), the results don't vary much from what was observed for married couples, almost as if its the intersection of the patterns seen for single and married respondents  (Figure \@ref(fig:two), Figure \@ref(fig:three)). This result is also seen in plot 2 of (Figure \@ref(fig:four)), implying that employed respondents who are living together in common law with no children have similar ideas about having children in future, with one difference that not having a child increases the percentage of respondents of both genders who would want children in the future, but that number decreases with increasing income. 
+
+### Income and Age 
+Income and Age seem to be associated very closely to each other, as seen by the graph in (Figure \@ref(fig:five)). For both men and women, respondents who are young (between 15 and 40) on average earn less than CAD 50,000 annually. Younger men tend to earn more with respect to women of the same age, with men in the sample earning more than women across all age groups, even though the sample has more women than men. The age group with the highest earning individuals for both men and women is 40-49, with men older than 49 earning significantly more than women of the same age. The significant gender pay gap for all age groups is very visible in this figure.    
+
+### Income and Occupation 
+The results of this Section are not surprising, as it is common knowledge that jobs which require a higher specialized skill set (education) and more hours, pay better. This is exactly what is seen in (Figure \@ref(fig:six)). For women, the occupations which house the highest earning women in the sample are that related to finance, management, education and health. The data is skewed as majority of the women in the sample work in sales, however in terms of percentages the previous result still holds. High income men on the other hand, are more concentrated in occupations relating to trade, management, finance and educations, earning significantly more than women in the same field. The gender pay gap as well as the unequal representation of women in all high earning fields is evident from the results of this Section. 
+
+### Income and Education
+Like the Section before, the results of this Section only verify what is assumed to be common knowledge. More investment into education associates with higher annual earnings on average, more for men than for women, but the association is present for both genders. This can be clearly seen in (Figure \@ref(fig:seven)). High income individuals on average have a college degree or higher (for both men and women), with increasing education levels corresponding to a higher concentration of high income individuals. Gender disparity is also evident here, as on average, women with the same educational qualifications tend to earn than men, even though the sample has more women respondents than men. 
+
+## Age and Future Intention of Children
+For the sample of the data which includes respondents who chose to report their intention of having children in the future, the relation between Age and Future intention of children is reported in (Figure \@ref(fig:eight)) which is present in Appendix B. 
+
+As it can be seen from (Plot 1, Figure \@ref(fig:eight)), majority young men and women (below 29, the age groups with respondents primarily earning below CAD 50,000) want to have children in the future, however the trend for respondents over 30 flips, with majority men and women being certain about not wanting children in the future. When the sample is restricted to only include respondents who reported to be employed as of last week (Plot 2, Figure \@ref(fig:eight)), no significant differences are noted relative to the full sample. The age group which housed the highest earning individuals (40-49) remain certain that they don't want children in the near future, with women having a relatively stronger conviction to not have children than men. When the sample is further restricted to include only single and employed respondents (Plot 1, Figure \@ref(fig:nine)),, the respondents who certainly want children in the future fall primarily into the age group of below 29. The proportion of respondents who certainly don't want children in the future increases as move to older age groups, for both men and women. 
+
+In (Plot 2, Figure  \@ref(fig:nine)), a final restriction is placed on the sample, by restricting it to only include single employed residents with no children at the time of the survey. From this figure, it can be seen that the results obtained previously still hold. Younger respondents are leaning towards having kids in the future whereas older respondents lean the other way. Married and employed respondents (Plot 1, Figure \@ref(fig:ten)) of all ages and gender share the consensus of not wanting children in the future, and this result also applies to married employed residents with no children (Plot 2, Figure \@ref(fig:ten)). This inverse effect of increasing age on future intention of children is also observed when looking at employed respondents who are living in common law (Plot 1, Figure \@ref(fig:eleven)), and restricting the sample on the basis of previous children does not change this result (Plot 2, Figure \@ref(fig:eleven)). 
+
+## Occupation and Future Intention of Children
+For the sample of the data which includes respondents who chose to report their intention of having children in the future, the relation between Occupation and Future intention of children is reported in (Figure \@ref(fig:twelve)) which is present in Appendix B. 
+
+According to the results of Section 3.1.3, for women the highest paying fields were: Management, Business, Education and Health; whereas for men they were: Management, Applied Sciences, Trade, Business and Education. To investigate how future intention of children vary between high earning occupations to low earning occupations a cross tabulation was plot as bar chart in (Plot 1 and 2, Figure \@ref(fig:twelve)). From this graph, it can be seen that women from the aforementioned high earning occupations are determined with great certainty that they don't want children in the future. Women who do want children are primarily occupied in the field of sales, however even then the consensus is that majority don't want children in the future. 
+
+The average intention of men across all occupations is similar to that of women, saying that they don't want to have children in the future, however a greater percentage of men want kids in the future than women. Furthermore, men in high earning occupations, when compared to other fields, on average, are more determined towards not having children in the future. Extending the analysis to the employed sample who is also single and comparing them with the sample which is married or living together, (Plot 1, Figures \@ref(fig:thirteen), \@ref(fig:fourteen), \@ref(fig:fifteen)), more insight is found. Single men express a greater desire to have children than single women, across all occupations. Single respondents on average have a stronger intention to have children in the future than married respondents or those who are living together. The common trend noticed for both genders across all marital statuses is that for their respective high earning fields, the consensus remains to not want to have children in the future. 
+
+Further observing the samples who don't have any children (Plot 2, Figures \@ref(fig:thirteen), \@ref(fig:fourteen), \@ref(fig:fifteen)), the absolute desire to have children in the future increases for all the samples, however singles behave differently here than married people and people who live together. Single, employed and childless people of both genders seem to be divided in terms of their desire to have children in the future, even in their respective high earning occupations (with men showing a greater desire with lesser uncertainty). But, being childless has no such effect on the sample which is married. This group remains pretty certain that they don't want to have children, even in lower income occupations, for both genders. For the sample that is living together and childless, females seem to be divided in certainty about their decision, while males are leaning more towards wanting kids in the future. However, this effect becomes smaller as we move from low earning occupations to high earning occupations for the respective sexes.  
+
+## Education and Future Intention of Children
+For the sample of the data which includes respondents who chose to report their intention of having children in the future, the relation between Education and Future intention of children is reported in (Figure \@ref(fig:sixteen)) which is present in Appendix B. 
+
+According to the unsurprising results of Section 3.1.4, a higher education is rewarded with a higher income. While men across all levels of education tend to earn more than women, both genders show that their highest earning members tend to have more than college level education (a bachelor's degree being the most popular among high earners).As seen in (Plot 1 and 2, Figure \@ref(fig:sixteen)), for both genders, as we move to higher levels of education, respondents on average don't desire kids in the near future. This effect is visible especially in the upper echelons of education, a respondent with a degree above bachelors is more determined on average to not have kids in the future. This is also seen when the 3 lowest education levels are compared for both genders, as the percentage who definitely want children decreases while the percentage who definitely don't want children increases. Restricting for the employed population has no significant effect on the aforementioned results. 
+
+As expected, the sub-sample of single people on average show a greater desire to have children when compared to married people and people who are living in common law (Plot 1, Figures \@ref(fig:seventeen), \@ref(fig:eighteen), \@ref(fig:nineteen)). Even so, it can be seen that increasing levels of education does bring upon a relative decline in the intentions of single people to have children in the future. Married people and people who live in common law, who are already hesitant towards future kids, increasing education just shows an even stronger conviction towards not wanting children in the future. Removing the effects of previous children for these sub samples (Plot 2, Figures \@ref(fig:seventeen), \@ref(fig:eighteen), \@ref(fig:nineteen)), confirmed the validity of these results, as even though majority of the childless single respondents want to have children, some extent of the negative influence of a higher education of future intention of children is noticed. This effect is even clearer for married men and women who have no children. This effect, in the sample who is living in common law with their partners and have no children, is divided between the two sexes. While more educated females in this sample feel they don't want to have children, more educated men show a greater desire to have children in the future. 
+
+# Discussion 
+## Income
+As seen from the results mentioned in Section 3.1.1, the first thing to notice about the sample is that majority of the respondents definitely don't have children in the future. When cross-tabulated with income bands, a significant percentage of both men and women in the lower income bands (below CAD 50,000) want children in the future. This result is opposing the notion that a higher income indicates that the respondent is more capable of caring for a child, and so they would not mind having children in the future. Possibly because of endogenous factors which correlate to both a higher income and a lower want of children in the future. The first thing that comes to mind would be the effect of age. As seen in Section 3.1.2, it was found that people aged 40-49 earn the most, and this true for both genders. Declining fertility could play a big role in why such results are observed, however it might not be the only factor responsible as people in this age group are also more likely to have children already, or don't want a permanent change in their already established lifestyle. 
+
+Another confounding factor that could be causing the results we see is employment. As seen in Section 3.1.3, some jobs offer great salaries and benefits (like analysts in a hedge-fund) but also require greater hours. Thus, to get a better idea about the role of employment, and to see why people who earn more still don't want to have children in the future, we focus on a sub-sample of respondents who reported to be working as of last week. As seen in (Plot 2, Figure \@ref(fig:one)) we don't observe significantly different results here. This and the results from Section 3.1.3 point us towards the fact that it might not just be employment, but rather specific occupations might also contribute towards the results we observe. 
+
+Further efforts to decompose this negative association of higher income on future intentions of children, we look at the role of the respondents marital status. As one might expect respondents who were single and employed at the time of the survey, on average showed a greater desire to have children in the future, more than married respondents or respondents who were living in common-law, however the observed inverse effect of income just becomes clearer for this sub-sample (which is surprising, as one might expect single people to want children in the future). This gives us the first piece of evidence towards successful people not wanting children in the future. Further controlling for respondents who have never been married and have children prior to the survey, we don't see much of a difference, and it wouldn't be logically incorrect to attribute the idea of having children to people who are married or are living together. However, the evidence points to the contrary. The idea that people might choose success over children (or are too busy to have children) comes from the case of employed and married respondents, who on average are extremely convinced, irrespective of income, that they don't want to have kids in the future, however controlling for the fact that they might already have children becomes necessary to get a conclusion analogous to the one before. Married and employed respondents with no children at the time of this survey (Plot 2, Figure \@ref(fig:three)) also don't want children in the near future, and their conviction seems to only get stronger with increasing income. The reason we see people from low income bands wanting kids in the future more is because they are primarily young and just starting their career, thus have the time and energy that goes towards caring for an infant. Therefore, to understand if success is what is causing people to refrain from having children, age needs to be looked into. The discussion of these results are found in the next Section.     
+
+## Age
+The results of Section 3.1.2 and Section 3.2 showed the evident correlation of being older and earning more. While age is associated with future intention of children through the notion of decreasing fertility, marital status and previous children also play a key role in determining future intention of having children. As discussed earlier, it is not surprising to see younger respondents of both genders to want children in the future, giving us one possible explanation for the declining intention of having children in the future with increasing income - young people earn less on average and want to have kids in the future. However if age was the only factor causing this result, we shouldn't be seeing the results we saw in Figures \@ref(fig:nine), \@ref(fig:ten) and \@ref(fig:eleven), when we look at samples restricted based on marital status. 
+
+Compared to young employed single respondents, young married respondents and female respondents of the same age group who are living together in common law have very different intentions. Married respondents of all ages on average don't want to have children and this result is also seen for young females who live with their partners. Thus, the role of marital status is an important one with respect to future intention of children, however it is almost always attributed to married people having kids prior to responding to the survey. Figure \@ref(fig:ten) clearly shows that when childless married respondents are looked at, the trend observed previously does not change drastically (Younger married childless men want children but females of the same description are more divided on the decision). Declining fertility is not the only factor that causes older respondents to not want children in the future, marital status and previous children are also key here. Age seems to have a significant contribution towards the high income respondent's future intention of children, however a lot remains unexplained. As seen in Sections 3.1.3 and 3.1.4, and drawing from the findings of [@alfaraj2019] and [@modena2014], occupation and education also play a key role in determining intention of having children in the future. These findings are discussed in the Sections below.  
+
+## Occupation
+The results of Section 3.1.3 and 3.3 point towards an association between the occupation and future intention of children, however this association seems to be facilitated via income. Respondents who occupy higher paying fields are also very determined about not wanting children in the future. Upon further decomposition, it was found that the association was different for men and women hailing from different marital statuses and if they had prior children. 
+
+On average, people who are employed in high paying fields don't want to have children in the future. This could be because jobs that pay higher also require a greater time commitment, which in turn leaves the employees with lesser time to devote to their family. Thus, this might provide another explanation as to why rising income is associated with declining desires to have a child in the future. People who are earning less are probably working in sectors that don't expect an abnormal devotion of time and energy, so theoretically they should have more time to take up the responsibilities of caring for an infant. Similarly, more successful people (higher position in their respective high paying fields and thus a higher income), might choose not to have children in the future simply because they don't have the time to do so. However, this is a conscious choice that the person makes in the career-family trade-off that all professionals in the 21st century face. Women are no longer simply homemakers and the unequal representation of women across all fields make it harder for them to succeed relative to a man with the same skill set in the same field. This is why when the sample was separated on the basis of gender, men across all fields of occupation, on average expressed a greater desire to have children. 
+
+Furthermore, there is the conservative societal belief suggesting that married people show a greater desire to have children, the results found in Section 3.3 contradict this notion. Continuing with the idea that higher paying jobs mean lesser time to devote to the family, couples should be better off than single people. However, the data contradicts this too. Single people on average show a greater desire to have children in the future than people who are in a relationship. This means that time deficit is not the only factor which drives professionals from high paying occupations to not want kids in the future. There are other factors which push the scales towards career in the work-life trade-off, and more and more married people are going the way of their careers. If the influence of having previous children is removed, more women who are in a relationship are choosing their careers over the idea of starting their own family, while some men, possibly due to their professional privilege, like the idea of having kids in the future. For single people without children the trade-off is still significant with the sample being divided on either directions. Thus, it might appear that occupation has a valid association with future intention of children, but this association might not be direct. Whether the person is in a relationship matters greatly, as does their gender and if they had children in the past. Giving occupation a greater role while decomposing the income trend might be incorrect, and many endogenous unobservable factors might be responsible for the results we see. 
+
+## Education
+The results of Section 3.1.4 and 3.4 point towards an association between the occupation and future intention of children, and it seems likely that it will be able to explain the negative association seen in income a bit better. Respondent's future intention of having children, when compared on the basis of their education, provided a negative association with rising levels of education. This may happen due to a range of factors, for example - a higher education is correlated with higher debt (student debt) which may make childcare relatively less affordable, however career ambitions seems to be a logical explanation. A person who invests a significant amount of time and money into their education might feel like having a child is not a part of their 3 year plan. However, this might only be true for new graduates who are unemployed. When only the employed proportion of the sample is brought under the microscope, the results contradict this notion. Even among people who are employed the negative association was evident. This result hints to what we saw in the previous section, about the exogenous choice a person makes in the career-family trade-off, and the relatively successful respondents in this sample are leaning towards career. As society softens up to non-traditional gender roles, more women are seen choosing their careers over the possibility of starting a family (something men have been doing for centuries), and this could very well be one of the reasons that majority of the sample do not desire children in the future. 
+
+The analysis up-to now has established the fact that single people of both genders show greater desire of future children than their married or live-in counterparts, but what remains surprising is the determination with which married people desire not to have children in the future with almost a insignificant chunk showing certain desire (this is also true when previous children are accounted for). This result is more evidence that people of both genders could be consciously making the choice to favor their careers.
+
+However, we saw in Section 3.1.4 that lower education associates with lower income, and given lower education also associates with lower paying occupations, it is more likely than not that a young respondent who, for example only has a high school certificate, is working in sales, earns less than CAD 50,000 and wants children in the future because they are single and without children. Therefore, the effects of age, occupation and education combined could make it look like more and more people are choosing careers over family, but it could just as well be that higher income groups are on average older, with a higher concentration of people who already have had children and are in a relationship, therefore their choice to not want children in the future might not be due to them prioritizing their careers.
 
 
 
-```{r echo=FALSE}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 
-### Preliminary Analysis
+# Conclusion
+## Summary
+After extensive statistical analysis detailed above, we found a strong correlation between success in life and intention to have children. A strong predictor of successfulness is income and employment, keeping this in mind we found a pattern of increasing income correlated with diminishing future intention of having children. This trend appears to remain similar for both men and women across higher income levels. Consequently, participants earning less than $50,000 annually reported greater intentions for having children. While the pattern of higher income individuals not wanting children is not a surprising result, visual representation of this pattern shows how significant the change in mindset is from lower income to higher income groups. 
 
-data.emp %>%
-    ggplot(mapping = aes(x = age_group, fill = income_respondent)) +
-    geom_bar() +
-    ggtitle("Distribution of Income across Age Groups") + 
-    xlab("Age Groups") + ylab("Number of Respondents") + labs(fill = "Respondent Income") +
-    scale_fill_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme() + # add labels
-    facet_wrap(vars(sex))
+Consequently, due to the strong correlation between occupation and income there is a similar pattern as seen with income. Certain occupations require larger time commitment, also providing higher incomes, and as a result it is possible that the larger time commitment results in less time available to start a family. This pattern is common between men and women, and we don’t see much difference in the data between men and women. 
 
-```
+Another important pattern found through analysis was the declining intention to have children as age increases however, it is important to note that cannot be viewed independently when analyzing the correlation with future intention to have children. Based on our results, age and marital status must be viewed in tandem to get a more holistic and accurate representation of future intention to have children. 
 
-```{r echo=FALSE}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+Finally, education is a strong indicator of success, so we compared the data of education with future intention to have children for both men and women. We found a strong correlation between education and intention to have children, more educated respondents are indicated lower intentions to have children. This could be because of education resulting in higher debt and reducing affordability. Alternatively, highly educated individuals are likely to get better jobs which can require greater time commitment. As mentioned above, this can reduce availability for both men and women to start a family. 
 
-### Preliminary Analysis
+In summary, based on our analysis of the 2017 GSS we have found a strong correlation between success and future intention to have children. We believe this is a trend that will continue to exist due to the various factors listen in our discussion. 
 
-data.emp %>%
-    ggplot(mapping = aes(x = occupation, fill = income_respondent)) +
-    geom_bar() +
-    ggtitle("Distribution of Income across Various Occupations") +
-    xlab("Occupations") + ylab("Number of Respondents") + labs(fill = "Respondent Income") +
-    scale_x_discrete(limits=c("Sales", "Management", "App. Science",
-                              "Trade", "Business", "Education", 
-                              "Agriculture", "Art", "Manufacturing",
-                              "Health"))+
-    scale_fill_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme() + # add labels
-    facet_wrap(vars(sex))
-```
+## Limitations (Ethics and Biases)
+While we were able to use the data to reach meaningful conclusions, there were some limitations to the data obtained from the GSS that potentially reduced the accuracy of our conclusions and the ability to generalize our predictions to the Canadian population. 
 
-```{r echo=FALSE}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+First, there exists a strong representative bias. From a sample size of 20,000, a major proportion of respondents were women, Hence, there is a stark representative bias due to the lack of male respondents. Secondly, we faced significant issues with non-response bias. For our desired data there were predominantly ‘NA’ responses which greatly reduced the sample size on which we were able to conduct statistical analysis. 
 
-### Preliminary Analysis
+Finally, we believe there is a strong conformity bias in our data. Respondents are more likely to provide responses which they believe are either socially acceptable or responses which they believe the majority of the sample would have provided. As a result, there is uncertainty in whether our results are accurate and able to be generalized to the entire Canadian population. 
 
-data.emp %>%
-    ggplot(mapping = aes(x = education, fill = income_respondent)) +
-    geom_bar() +
-    ggtitle("Distribution of Income across Education Levels") +
-    xlab("Education") + ylab("Number of Respondents") + labs(fill = "Respondent Income") +
-    scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
-                              "Less than Bach", "Bach", "Above Bach" ))+
-    scale_fill_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme() + # add labels
-    facet_wrap(vars(sex))
-```
+## Scope for Future Analysis
+As a result of the limitations mentioned above, we created a supplementary survey to be distributed in a similar fashion as the GSS. This supplementary survey asks more pertinent questions regarding our initial research question. In addition, our survey attempts to be more inclusive which would allow for a more diverse set of responses and hence, more meaningful data. 
 
+Our survey attempts to gain more meaningful insights into the Canadian population, specifically in terms of how the average Canadian would measure success and rate their own success. This would allow us to make more meaningful conclusions regarding successfulness and future intention to have children with less scope for uncertainty by considering the limitations and biases present in the GSS. 
 
-```{r, echo=FALSE, out.width = '50%'}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+\newpage
+\appendix
 
-############################ Patchwork Plots ############ 
-  # 1. Income 
+# Appendix {-} 
+
+# Supplemental Survey to GSS 2017
+The link to our supplemental survey is available here:
+
+https://docs.google.com/forms/d/1FMRwRLuB22_5naaDdSJtAsZI7odjXDMvzbCgXYTKqiU/edit?usp=sharing
+
+Should the link fail to open, the survey is also present below. 
+
+## Preamble of the Survey
+The purpose of this survey is to provide data to authors studying the relation of a person's professional success to the decisions they might take regarding having a child in the next 3 years. 
+
+The GSS attempts to collect data regarding change in Canadian families on a periodic basis. While the survey asks pertinent and accurate questions, it is biased by its inherent weakness including but not limited to – response bias, conformity bias and selection bias. As a result, for our paper we created a supplementary survey, attached below, to get a more holistic and accurate representation of the Canadian family. The question for this survey were created in line with our research question, to collect more meaningful data as compared to what was collected through the GSS in order to reach more accurate conclusions. The supplementary survey attempts to be more inclusive, allowing respondents to choose from a larger number of genders, while also asking more income related questions which we believed were lacking in the GSS. 
+
+By choosing to answer this survey, as the respondent you agree to provide consent to the authors of the study to use the information you provide in their analysis. Your responses would be anonymous, in accordance to the Statistics Act. The purpose of this study is purely academical, your privacy is the highest priority for the authors, and your responses would not be used to generate any profits.
+
+Participation is voluntary, no compensation of any kind is provided for participation in this survey. Should a participant want to skip a question, they can choose to do so without penalty. Participants may withdraw from this survey at any time if they feel like it. However, participants should note that their participation is key to the validity of the study, and should they require clarification to any of the questions below, please contact the authors at the email address provided below. 
+
+For any questions you may have prior to the survey, please feel free to contact the authors at: anshuman.agarwal@mail.utoronto.ca 
+
+## Questions of the Survey
+1. What is your age?
+  - User Input
   
-  # full sample 
+2. What is your gender?
+  - Male
+  - Female
+  - Non-Binary
+  - Transgender
+  - Other 
+  
+3. Do you have a partner? (Answer yes if you have a significant other of any kind)
+  - Yes
+  - No
+  - Maybe
+  - Prefer Not to Say 
+
+4. What is the Partner Birth Country
+  - User Input
+  
+5. What is your Partner's Sex assigned at birth? 
+  - Male
+  - Female
+  - Prefer Not to Say
+
+6. Intention to have child with partner?
+  - Yes
+  - No
+  - Prefer Not to Say
+ 
+7.  Is there disagreement between you and your partner/spouse regarding intention to have children
+  - Yes
+  - No
+  - Prefer Not to Say
+  
+10. What is the main reason why you or your partner do not want to have children (Money, time, effort, health, just don’t want)
+  - User Input
+  
+11. What percentage of your expenses does financial support provided by your ex-partner cover
+  - 0-9.99%
+  - 10-19.99%
+  - 20-19.99%
+  - 30-39.99%
+  - 40-49.99%
+  - 50-59.99%
+  - 60-69.99%
+  - 70-79.99%
+  - 80-89.99%
+  - 90-100%
+  - Prefer Not to Say
+  
+12. On a scale of 1 - 10, (0 being extremely un-successfull - 10 being extremely successful) how successful do you think you are in life?
+  - User Input 
+  
+13. Which of the following factors do you think best represents success?
+  - Education
+  - Income
+  - Occupation
+  - Family
+  - House Type
+  - House Size 
+  - Number of Children
+  - Other
+  - Prefer Not to Say
+  
+14. On a scale of 1 - 10, (0 being extremely un-important - 10 being extremely important) how important of a factor do you think income is when thinking about having a child?
+  - User Input
+
+## End Page 
+Thank you for your contribution to this study!
+
+If any questions about the purpose of this survey remain unanswered, please feel free to submit your query to: anshuman.agarwal@mail.utoronto.ca  
+
+\newpage
+
+# Figures
+
+```{r one, fig.cap="A graph showing relation of Income and future intention of children: For the full sample and sample which reported to be employed as of last week.", echo = FALSE, message = FALSE, warning = FALSE}
+
+# full sample 
   full_inc <-
     data %>%
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
@@ -283,8 +481,14 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme(legend.position="none") + # add labels
     facet_wrap(vars(sex))
   
-  
-  # if WLW == Yes, MS == Single 
+  (full_inc + emp_inc) +
+    plot_layout(guides = 'collect')
+
+```
+
+```{r two, fig.cap="A graph showing relation of Income and future intention of children: For the sample which are employed and single, and sample which single, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+
+# if WLW == Yes, MS == Single 
   sing_inc <-
     data.single %>% 
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
@@ -301,12 +505,12 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme(legend.position="none") +# add labels
     facet_wrap(vars(sex))
   
-  # if WLW = Yes, MS = Livtog
-  livtog_inc <-
-    data.livtog %>%
+  # if WLW = Yes, MS = Single, NC = Yes 
+  sing_inc.nc <-
+    data.single.nc%>%
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Together Employed") +
+    ggtitle("Single Employed No Child") +
     xlab("Income") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
     scale_fill_discrete(limits=c("Probably yes",
@@ -318,8 +522,13 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme()+
     facet_wrap(vars(sex))
   
+  (sing_inc + sing_inc.nc) +
+    plot_layout(guides = 'collect')
   
-  # if WLW = Yes, MS = Married 
+```
+
+```{r three, fig.cap=" A graph showing relation of Income and future intention of children: For the sample which are employed and married, and sample which married, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+# if WLW = Yes, MS = Married 
   marr_inc <-
     data.married%>%
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
@@ -335,13 +544,36 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     theme(legend.position="none") + # add labels
     facet_wrap(vars(sex))
-  
-  # if WLW = Yes, MS = Single, NC = Yes 
-  sing_inc.nc <-
-    data.single.nc%>%
+
+# if WLW = Yes, MS = Married, NC = Yes 
+  marr_inc.nc <-
+    data.married.nc%>%
     ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Single Employed No Child") +
+    ggtitle("Married Employed No Child") +
+    xlab("Income") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
+    scale_x_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
+    scale_fill_discrete(limits=c("Probably yes",
+                                 "Definitely yes",
+                                 "Probably not",
+                                 "No, definitely not")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme()+
+    facet_wrap(vars(sex))
+  
+  (marr_inc + marr_inc.nc) + 
+    plot_layout(guides = 'collect')
+  
+```
+
+```{r four, fig.cap=" A graph showing relation of Income and future intention of children: For the sample which are employed and living together, and sample which living together, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+ # if WLW = Yes, MS = Livtog
+  livtog_inc <-
+    data.livtog %>%
+    ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
+    geom_bar() +
+    ggtitle("Living Together Employed") +
     xlab("Income") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
     scale_fill_discrete(limits=c("Probably yes",
@@ -370,52 +602,61 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme(legend.position="none") + # add labels
     facet_wrap(vars(sex))
   
+  (livtog_inc + livtog_inc.nc) + 
+    plot_layout(guides = 'collect')
   
-  # if WLW = Yes, MS = Married, NC = Yes 
-  marr_inc.nc <-
-    data.married.nc%>%
-    ggplot(mapping = aes(x = income_respondent, fill = future_children_intention)) +
-    geom_bar() +
-    ggtitle("Married Employed No Child") +
-    xlab("Income") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
-    scale_x_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
-    scale_fill_discrete(limits=c("Probably yes",
-                                 "Definitely yes",
-                                 "Probably not",
-                                 "No, definitely not")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme()+
-    facet_wrap(vars(sex))
-
-
-
-  
-  
-(full_inc + emp_inc) +
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Income and Future Children Intention: Part 1')
-  
-(sing_inc + sing_inc.nc) +
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Income and Future Children Intention: Part 2')
-  
-(marr_inc + marr_inc.nc) + 
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Income and Future Children Intention: Part 3')
-
-(livtog_inc + livtog_inc.nc) + 
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Income and Future Children Intention: Part 4')
 ```
 
-```{r, echo=FALSE, out.width = '50%'}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```{r five, fig.cap="A bar chart showing the distribution of respondents of each Income strata based on the Age Group they fall under", echo = FALSE, message = FALSE, warning = FALSE}
 
-############################ Patchwork Plots ############ 
-  # 2. Age 
-  
-  # full sample 
+data %>%
+    ggplot(mapping = aes(x = age_group, fill = income_respondent)) +
+    geom_bar() +
+    ggtitle("Distribution of Income across Age Groups") + 
+    xlab("Age Groups") + ylab("Number of Respondents") + labs(fill = "Respondent Income") +
+    scale_fill_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme() + # add labels
+    facet_wrap(vars(sex))
+
+```
+
+```{r six, fig.cap=" A bar chart showing the distribution of respondents of each Income strata based on their Occupation", echo = FALSE, message = FALSE, warning = FALSE}
+data %>%
+    ggplot(mapping = aes(x = occupation, fill = income_respondent)) +
+    geom_bar() +
+    ggtitle("Distribution of Income across Various Occupations") +
+    xlab("Occupations") + ylab("Number of Respondents") + labs(fill = "Respondent Income") +
+    scale_x_discrete(limits=c("Sales", "Management", "App. Science",
+                              "Trade", "Business", "Education", 
+                              "Agriculture", "Art", "Manufacturing",
+                              "Health"))+
+    scale_fill_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme() + # add labels
+    facet_wrap(vars(sex))
+```
+
+```{r seven, fig.cap=" A bar chart showing the distribution of respondents of each Income strata based on their maximum level of Education", echo = FALSE, message = FALSE, warning = FALSE}
+data %>%
+    ggplot(mapping = aes(x = education, fill = income_respondent)) +
+    geom_bar() +
+    ggtitle("Distribution of Income across Education Levels") +
+    xlab("Education") + ylab("Number of Respondents") + labs(fill = "Respondent Income") +
+    scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
+                              "Less than Bach", "Bach", "Above Bach" ))+
+    scale_fill_discrete(limits=c("<25k", "<50k", "<75k", "<100k", "<125k", ">=125k")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme() + # add labels
+    facet_wrap(vars(sex))
+```
+
+```{r eight, fig.cap=" A graph showing relation of Age and future intention of children: For the full sample and sample which reported to be employed as of last week", echo = FALSE, message = FALSE, warning = FALSE}
+
+# full sample 
   full_age <-
     data %>%
     ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
@@ -446,9 +687,14 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     theme(legend.position="none") + # add labels
     facet_wrap(vars(sex))
-  
-  
-  # if WLW == Yes, MS == Single 
+
+(full_age + emp_age)  + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Age Group and Future Children Intention: Part 1')
+```
+
+```{r nine, fig.cap="A graph showing relation of Age and future intention of children: For the sample which are employed and single, and sample which single, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+ # if WLW == Yes, MS == Single 
   sing_age <-
     data.single %>% 
     ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
@@ -463,13 +709,13 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     theme()+
     facet_wrap(vars(sex))
-  
-  # if WLW = Yes, MS = Livtog
-  livtog_age <-
-    data.livtog %>%
+
+   # if WLW = Yes, MS = Single, NC = Yes 
+  sing_age.nc <-
+    data.single.nc%>%
     ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Together Employed") +
+    ggtitle("Single Employed No Child") +
     xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_fill_discrete(limits=c("Probably yes",
                                  "Definitely yes",
@@ -477,10 +723,15 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
                                  "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") + # add labels
+    theme(legend.position="none") +# add labels
     facet_wrap(vars(sex))
   
-  
+(sing_age + sing_age.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Age Group and Future Children Intention: Part 2')
+```
+
+```{r ten, fig.cap="A graph showing relation of Age and future intention of children: For the sample which are employed and married, and sample which married, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
   # if WLW = Yes, MS = Married 
   marr_age <-
     data.married%>%
@@ -496,13 +747,13 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     theme()+
     facet_wrap(vars(sex))
-  
-  # if WLW = Yes, MS = Single, NC = Yes 
-  sing_age.nc <-
-    data.single.nc%>%
+
+  # if WLW = Yes, MS = Married, NC = Yes 
+  marr_age.nc <-
+    data.married.nc%>%
     ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Single Employed No Child") +
+    ggtitle("Married Employed No Child") +
     xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_fill_discrete(limits=c("Probably yes",
                                  "Definitely yes",
@@ -510,7 +761,29 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
                                  "No, definitely not")) +
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") +# add labels
+    theme()+
+    facet_wrap(vars(sex))
+  
+  (marr_age + marr_age.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Age Group and Future Children Intention: Part 3')
+```
+
+```{r eleven, fig.cap="A graph showing relation of Age and future intention of children: For the sample which are employed and living together, and sample which living together, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+# if WLW = Yes, MS = Livtog
+  livtog_age <-
+    data.livtog %>%
+    ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
+    geom_bar() +
+    ggtitle("Living Together Employed") +
+    xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
+    scale_fill_discrete(limits=c("Probably yes",
+                                 "Definitely yes",
+                                 "Probably not",
+                                 "No, definitely not")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme(legend.position="none") + # add labels
     facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Livtog. NC = Yes
@@ -529,46 +802,13 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme() + # add labels
     facet_wrap(vars(sex))
   
-  
-  # if WLW = Yes, MS = Married, NC = Yes 
-  marr_age.nc <-
-    data.married.nc%>%
-    ggplot(mapping = aes(x = age_group, fill = future_children_intention)) +
-    geom_bar() +
-    ggtitle("Married Employed No Child") +
-    xlab("Age Group") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
-    scale_fill_discrete(limits=c("Probably yes",
-                                 "Definitely yes",
-                                 "Probably not",
-                                 "No, definitely not")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme()+
-    facet_wrap(vars(sex))
-
-  
-  
-(full_age + emp_age)  + 
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Age Group and Future Children Intention: Part 1')
-(sing_age + sing_age.nc) + 
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Age Group and Future Children Intention: Part 2')
-(marr_age + marr_age.nc) + 
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Age Group and Future Children Intention: Part 3')
-(livtog_age + livtog_age.nc) + 
+  (livtog_age + livtog_age.nc) + 
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Age Group and Future Children Intention: Part 4')
 ```
 
-```{r, echo=FALSE, out.width = '50%'}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
-
-############################ Patchwork Plots ############ 
-  # 3. Occupation
-  
-  # full sample 
+```{r twelve, fig.cap="A graph showing relation of Occupation and future intention of children: For the full sample and sample which reported to be employed as of last week", echo = FALSE, message = FALSE, warning = FALSE}
+# full sample 
   full_occ <-
     data %>%
     ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
@@ -604,7 +844,13 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme(legend.position="none") + # add labels
     facet_wrap(vars(sex))
   
-  # if WLW == Yes, MS == Single 
+ (full_occ + emp_occ) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Occupation and Future Children Intention: Part 1')
+```
+
+```{r thirteen, fig.cap="A graph showing relation of Occupation and future intention of children: For the sample which are employed and single, and sample which single, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+ # if WLW == Yes, MS == Single 
   sing_occ <-
     data.single %>% 
     ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
@@ -620,43 +866,6 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     theme()+
-    facet_wrap(vars(sex))
-  
-  # if WLW = Yes, MS = Livtog
-  livtog_occ <-
-    data.livtog %>%
-    ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
-    geom_bar() +
-    ggtitle("Living Together Employed") +
-    xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
-    scale_x_discrete(limits=c("Sales", "Management", "App. Science",
-                              "Trade", "Business", "Education", 
-                              "Agriculture", "Art", "Manufacturing",
-                              "Health"))+
-    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
-                                 "Probably not", "No, definitely not")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") + # add labels
-    facet_wrap(vars(sex))
-  
-  
-  # if WLW = Yes, MS = Married 
-  marr_occ <-
-    data.married%>%
-    ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
-    geom_bar() +
-    ggtitle("Married Employed") +
-    xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
-    scale_x_discrete(limits=c("Sales", "Management", "App. Science",
-                              "Trade", "Business", "Education", 
-                              "Agriculture", "Art", "Manufacturing",
-                              "Health"))+
-    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
-                                 "Probably not", "No, definitely not")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme() +
     facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Single, NC = Yes 
@@ -675,6 +884,73 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme_minimal() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
     theme(legend.position="none") +# add labels
+    facet_wrap(vars(sex))
+
+   (sing_occ + sing_occ.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Occupation and Future Children Intention: Part 2')
+```
+
+```{r fourteen, fig.cap=" A graph showing relation of Occupation and future intention of children: For the sample which are employed and married, and sample which married, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+
+  # if WLW = Yes, MS = Married 
+  marr_occ <-
+    data.married%>%
+    ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
+    geom_bar() +
+    ggtitle("Married Employed") +
+    xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
+    scale_x_discrete(limits=c("Sales", "Management", "App. Science",
+                              "Trade", "Business", "Education", 
+                              "Agriculture", "Art", "Manufacturing",
+                              "Health"))+
+    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
+                                 "Probably not", "No, definitely not")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme() +
+    facet_wrap(vars(sex))
+
+  # if WLW = Yes, MS = Married, NC = Yes 
+  marr_occ.nc <-
+    data.married.nc%>%
+    ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
+    geom_bar() +
+    ggtitle("Married Employed No Child") +
+    xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
+    scale_x_discrete(limits=c("Sales", "Management", "App. Science",
+                              "Trade", "Business", "Education", 
+                              "Agriculture", "Art", "Manufacturing",
+                              "Health"))+
+    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
+                                 "Probably not", "No, definitely not")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme()+
+    facet_wrap(vars(sex))
+ 
+(marr_occ + marr_occ.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Occupation and Future Children Intention: Part 3')
+```
+
+```{r fifteen, fig.cap=" A graph showing relation of Occuptaion and future intention of children: For the sample which are employed and living together, and sample which living together, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+# if WLW = Yes, MS = Livtog
+  livtog_occ <-
+    data.livtog %>%
+    ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
+    geom_bar() +
+    ggtitle("Living Together Employed") +
+    xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
+    scale_x_discrete(limits=c("Sales", "Management", "App. Science",
+                              "Trade", "Business", "Education", 
+                              "Agriculture", "Art", "Manufacturing",
+                              "Health"))+
+    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
+                                 "Probably not", "No, definitely not")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme(legend.position="none") + # add labels
     facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Livtog. NC = Yes
@@ -695,48 +971,13 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme() + # add labels
     facet_wrap(vars(sex))
   
-  
-  # if WLW = Yes, MS = Married, NC = Yes 
-  marr_occ.nc <-
-    data.married.nc%>%
-    ggplot(mapping = aes(x = occupation, fill = future_children_intention)) +
-    geom_bar() +
-    ggtitle("Married Employed No Child") +
-    xlab("Occupation") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
-    scale_x_discrete(limits=c("Sales", "Management", "App. Science",
-                              "Trade", "Business", "Education", 
-                              "Agriculture", "Art", "Manufacturing",
-                              "Health"))+
-    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
-                                 "Probably not", "No, definitely not")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme()+
-    facet_wrap(vars(sex))
-  
-  
-
-(full_occ + emp_occ) + 
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Occupation and Future Children Intention: Part 1')
-(sing_occ + sing_occ.nc) + 
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Occupation and Future Children Intention: Part 2')
-(marr_occ + marr_occ.nc) + 
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Occupation and Future Children Intention: Part 3')
-(livtog_occ + livtog_occ.nc) + 
+  (livtog_occ + livtog_occ.nc) + 
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Occupation and Future Children Intention: Part 4')
 ```
 
-```{r, echo=FALSE, out.width = '50%'}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
-
-############################ Patchwork Plots ############ 
-  # 4. Eductaion
-  
-  # full sample 
+```{r sixteen, fig.cap="A graph showing relation of Education and future intention of children: For the full sample and sample which reported to be employed as of last week", echo = FALSE, message = FALSE, warning = FALSE}
+# full sample 
   full_edu <-
     data %>%
     ggplot(mapping = aes(x = education, fill = future_children_intention)) +
@@ -768,7 +1009,13 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme(legend.position="none") + # add labels
     facet_wrap(vars(sex))
   
-  # if WLW == Yes, MS == Single 
+(full_edu + emp_edu)  + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Education and Future Children Intention: Part 1')
+```
+
+```{r seventeen, fig.cap="A graph showing relation of Education and future intention of children: For the sample which are employed and single, and sample which single, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+# if WLW == Yes, MS == Single 
   sing_edu <-
     data.single %>% 
     ggplot(mapping = aes(x = education, fill = future_children_intention)) +
@@ -784,38 +1031,6 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme()+
     facet_wrap(vars(sex))
   
-  # if WLW = Yes, MS = Livtog
-  livtog_edu <-
-    data.livtog %>%
-    ggplot(mapping = aes(x = education, fill = future_children_intention)) +
-    geom_bar() +
-    ggtitle("Living Together Employed") +
-    xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
-    scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
-                              "Less than Bach", "Bach", "Above Bach" ))+
-    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
-                                 "Probably not", "No, definitely not")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme(legend.position="none") + # add labels
-    facet_wrap(vars(sex))
-  
-  
-  # if WLW = Yes, MS = Married 
-  marr_edu <-
-    data.married%>%
-    ggplot(mapping = aes(x = education, fill = future_children_intention)) +
-    geom_bar() +
-    ggtitle("Married Employed") +
-    xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
-    scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
-                              "Less than Bach", "Bach", "Above Bach" ))+
-    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
-                                 "Probably not", "No, definitely not")) +
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
-    theme()+
-    facet_wrap(vars(sex))
   
   # if WLW = Yes, MS = Single, NC = Yes 
   sing_edu.nc <-
@@ -833,12 +1048,19 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme(legend.position="none") +# add labels
     facet_wrap(vars(sex))
   
-  # if WLW = Yes, MS = Livtog. NC = Yes
-  livtog_edu.nc <-
-    data.livtog.nc %>%
+(sing_edu + sing_edu.nc) + 
+    plot_layout(guides = 'collect') +
+    plot_annotation(title = 'Education and Future Children Intention: Part 2')
+
+```
+
+```{r eighteen, fig.cap="A graph showing relation of Education and future intention of children: For the sample which are employed and married, and sample which married, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+  # if WLW = Yes, MS = Married 
+  marr_edu <-
+    data.married%>%
     ggplot(mapping = aes(x = education, fill = future_children_intention)) +
     geom_bar() +
-    ggtitle("Living Together Employed No Child") +
+    ggtitle("Married Employed") +
     xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
     scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
                               "Less than Bach", "Bach", "Above Bach" ))+
@@ -866,27 +1088,91 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
     theme() + # add labels
     facet_wrap(vars(sex))
   
-  
-
-
-(full_edu + emp_edu)  + 
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Education and Future Children Intention: Part 1')
-(sing_edu + sing_edu.nc) + 
-    plot_layout(guides = 'collect') +
-    plot_annotation(title = 'Education and Future Children Intention: Part 2')
 (marr_edu + marr_edu.nc) + 
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Education and Future Children Intention: Part 3')
+```
+
+```{r nineteen, fig.cap="A graph showing relation of Education and future intention of children: For the sample which are employed and living together, and sample which living together, employed and without children", echo = FALSE, message = FALSE, warning = FALSE}
+  # if WLW = Yes, MS = Livtog
+  livtog_edu <-
+    data.livtog %>%
+    ggplot(mapping = aes(x = education, fill = future_children_intention)) +
+    geom_bar() +
+    ggtitle("Living Together Employed") +
+    xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
+    scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
+                              "Less than Bach", "Bach", "Above Bach" ))+
+    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
+                                 "Probably not", "No, definitely not")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme(legend.position="none") + # add labels
+    facet_wrap(vars(sex))
+  
+  
+  # if WLW = Yes, MS = Livtog. NC = Yes
+  livtog_edu.nc <-
+    data.livtog.nc %>%
+    ggplot(mapping = aes(x = education, fill = future_children_intention)) +
+    geom_bar() +
+    ggtitle("Living Together Employed No Child") +
+    xlab("Eductaion") + ylab("Number of Respondents") + labs(fill = "Future Children Intention") +
+    scale_x_discrete(limits=c("Less than HS", "HS", "Trade", "College",
+                              "Less than Bach", "Bach", "Above Bach" ))+
+    scale_fill_discrete(limits=c("Probably yes", "Definitely yes",
+                                 "Probably not", "No, definitely not")) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    theme()+
+    facet_wrap(vars(sex))
+  
 (livtog_edu + livtog_edu.nc) + 
     plot_layout(guides = 'collect') +
     plot_annotation(title = 'Education and Future Children Intention: Part 4')
-
 ```
 
+\newpage
 
-Figure 1: 
-1. For Females - Proportion pick up one part one by looking at income at the complete data for this intention of children is decreasing when we move from 25 to 250 K to 75 people were definitely yes I don't think that otherwise people definitely don't want that abortion increases in value and it is with the trailer see you when you talk about the post and then come back to the tandem 
+# References 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
